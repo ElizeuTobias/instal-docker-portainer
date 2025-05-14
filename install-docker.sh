@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Script de instalação automática do Docker, Docker Compose, Portainer CE e configuração de acesso root
+# Script de instalação automática do Docker, Docker Compose e Portainer CE
 # Criado em: 14/05/2025
 
 echo "======================================================"
-echo "Iniciando instalação do Docker, Docker Compose, Portainer e configuração de acesso root"
+echo "Iniciando instalação do Docker, Docker Compose e Portainer"
 echo "======================================================"
 
 # Verificar se está rodando como root
@@ -19,27 +19,6 @@ if [ "$SUDO_USER" ]; then
 else
   USER_NAME="$USER"
 fi
-
-echo "======================================================"
-echo "Configurando acesso SSH para o usuário root"
-echo "======================================================"
-
-# Habilitar login SSH para root
-echo "Habilitando login SSH para o usuário root..."
-sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-# Caso a linha não exista ou esteja formatada diferente
-grep -q "^PermitRootLogin" /etc/ssh/sshd_config || echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
-
-# Reiniciar o serviço SSH
-echo "Reiniciando o serviço SSH..."
-systemctl restart sshd || service ssh restart
-
-# Configurar senha para o usuário root
-echo "Configurando senha para o usuário root..."
-echo "Por favor, defina uma senha forte para o usuário root:"
-passwd root
-
-echo "Acesso root via SSH configurado com sucesso!"
 
 echo "======================================================"
 echo "1 - Atualizando o Sistema"
@@ -108,16 +87,14 @@ echo "1 - Criando volume para o Portainer Server"
 docker volume create portainer_data
 
 echo "2 - Baixando e instalando o container Portainer Server"
-docker run -d -p 8000:8000 -p 9000:9000 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:lts
+docker run -d -p 9000:9000 -p 9443:9443 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:lts
 
 echo "======================================================"
 echo "Instalação Concluída!"
 echo "======================================================"
 echo "Docker instalado: $(docker --version)"
-echo "Portainer CE está rodando na porta 8000 (HTTP) e 9000 (HTTPS)"
-echo "Acesse o Portainer: https://$(hostname -I | awk '{print $1}'):9000"
+echo "Portainer CE está rodando na porta 9000 (HTTP) e 9443 (HTTPS)"
+echo "Acesse o Portainer: https://$(hostname -I | awk '{print $1}'):9443"
 echo ""
-echo "IMPORTANTE:"
-echo "1. Para que as alterações de grupo entrem em vigor, você precisa fazer logout e login novamente."
-echo "2. Acesso SSH como root foi habilitado."
+echo "IMPORTANTE: Para que as alterações de grupo entrem em vigor, você precisa fazer logout e login novamente."
 echo "======================================================"
