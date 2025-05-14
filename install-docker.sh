@@ -87,14 +87,14 @@ echo "1 - Criando volume para o Portainer Server"
 docker volume create portainer_data
 
 echo "2 - Baixando e instalando o container Portainer Server"
-docker run -d -p 9000:9000 -p 9443:9443 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:lts
+docker run -d -p 8000:8000 -p 9000:9000 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:lts
 
 echo "======================================================"
 echo "Instalação Concluída!"
 echo "======================================================"
 echo "Docker instalado: $(docker --version)"
-echo "Portainer CE está rodando na porta 9000 (HTTP) e 9443 (HTTPS)"
-echo "Acesse o Portainer: https://$(hostname -I | awk '{print $1}'):9443"
+echo "Portainer CE está rodando na porta 8000 (HTTP) e 9000 (HTTPS)"
+echo "Acesse o Portainer: https://$(hostname -I | awk '{print $1}'):9000"
 echo ""
 echo "IMPORTANTE: Para que as alterações de grupo entrem em vigor, você precisa fazer logout e login novamente."
 echo "======================================================"
